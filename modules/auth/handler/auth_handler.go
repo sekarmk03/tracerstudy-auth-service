@@ -9,8 +9,6 @@ import (
 	commonJwt "tracerstudy-auth-service/common/jwt"
 	"tracerstudy-auth-service/common/utils"
 
-	// mhsSvc "tracerstudy-auth-service/modules/mhsbiodata/service"
-	// pktsSvc "tracerstudy-auth-service/modules/pkts/service"
 	"tracerstudy-auth-service/modules/auth/client"
 	userSvc "tracerstudy-auth-service/modules/user/service"
 	"tracerstudy-auth-service/pb"
@@ -21,32 +19,26 @@ import (
 
 type AuthHandler struct {
 	pb.UnimplementedAuthServiceServer
-	config config.Config
-	// mhsSvc     mhsSvc.MhsBiodataServiceUseCase
-	// pktsSvc    pktsSvc.PKTSServiceUseCase
+	config     config.Config
 	userSvc    userSvc.UserServiceUseCase
 	jwtManager *commonJwt.JWT
 	pktsSvc    client.PktsServiceClient
-	mhsSvc client.MhsBiodataServiceClient
+	mhsSvc     client.MhsBiodataServiceClient
 }
 
 func NewAuthHandler(
 	config config.Config,
-	// mhsService mhsSvc.MhsBiodataServiceUseCase,
-	// pktsService pktsSvc.PKTSServiceUseCase,
 	userService userSvc.UserServiceUseCase,
 	jwtManager *commonJwt.JWT,
 	pktsService client.PktsServiceClient,
 	mhsService client.MhsBiodataServiceClient,
 ) *AuthHandler {
 	return &AuthHandler{
-		config: config,
-		// mhsSvc:     mhsService,
-		// pktsSvc:    pktsService,
+		config:     config,
 		userSvc:    userService,
 		jwtManager: jwtManager,
 		pktsSvc:    pktsService,
-		mhsSvc: mhsService,
+		mhsSvc:     mhsService,
 	}
 }
 
