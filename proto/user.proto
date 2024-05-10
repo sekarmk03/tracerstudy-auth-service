@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message User {
+    uint64 id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+    string password = 5;
+    uint32 role_id = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
+    google.protobuf.Timestamp deleted_at = 9;
+}
+
+message GetAllUsersResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated User data = 3;
+}
+
+message GetUserByIdRequest {
+    uint64 id = 1;
+}
+
+message GetUserResponse {
+    uint32 code = 1;
+    string message = 2;
+    User data = 3;
+}
+
+message DeleteUserResponse {
+    uint32 code = 1;
+    string message = 2;
+}
+
+service UserService {
+    rpc GetAllUsers(google.protobuf.Empty) returns (GetAllUsersResponse) {};
+    rpc GetUserById(GetUserByIdRequest) returns (GetUserResponse) {};
+    rpc CreateUser(User) returns (GetUserResponse) {};
+    rpc UpdateUser(User) returns (GetUserResponse) {};
+    rpc DeleteUser(GetUserByIdRequest) returns (DeleteUserResponse) {};
+}

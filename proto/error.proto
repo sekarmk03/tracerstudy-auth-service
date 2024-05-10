@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+message ErrorResponse {
+    uint32 code = 1;
+    string message = 2;
+}
