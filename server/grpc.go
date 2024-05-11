@@ -83,25 +83,3 @@ func (g *Grpc) AwaitTermination() error {
 	g.Server.GracefulStop()
 	return g.listener.Close()
 }
-
-// func defaultUnaryServerInterceptor() []grpc.UnaryServerInterceptor {
-// 	jwtManager := commonJwt.NewJWT(secretKey, tokenDuration)
-// 	authInterceptor := interceptor.NewAuthInterceptor(jwtManager, accessibleRoles())
-
-// 	options := []grpc.ServerOption{
-// 		grpc.UnaryInterceptor(authInterceptor.Unary()),
-// 	}
-
-// 	return options
-// }
-
-// func accessibleRoles() map[string][]uint32 {
-// 	const prodiService = "/tracer_study_grpc.ProdiService/"
-// 	// 1 = admin
-// 	// 2 = user
-// 	return map[string][]uint32{
-// 		prodiService + "GetAllProdi": {1, 2},
-// 		prodiService + "GetProdiByKodeprodi": {1, 2},
-// 		prodiService + "CreateProdi": {1},
-// 	}
-// }

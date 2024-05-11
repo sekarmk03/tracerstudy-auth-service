@@ -13,9 +13,8 @@ type Config struct {
 	Port        Port
 	MySQL       MySQL
 	// Redis       Redis
-	// JWTConfig   JWTConfig
-	JWT         JWTConfig
-	SIAK_API    SIAK_API
+	JWT       JWTConfig
+	SIAK_API  SIAK_API
 	ClientURL ClientURL
 }
 
@@ -33,17 +32,13 @@ type MySQL struct {
 }
 
 type ClientURL struct {
-	Pkts string `env:"CLIENT_URL_PKTS"`
+	Pkts       string `env:"CLIENT_URL_PKTS"`
 	MhsBiodata string `env:"CLIENT_URL_MHSBIODATA"`
 }
 
 // type Redis struct {
 // 	Address  string `env:"REDIS_ADDRESS,required"`
 // 	Password string `env:"REDIS_PASSWORD"`
-// }
-
-// type JWTConfig struct {
-// 	SecretKey string `env:"JWT_SECRET_KEY"`
 // }
 
 type SIAK_API struct {
