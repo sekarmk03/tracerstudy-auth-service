@@ -10,6 +10,7 @@ import (
 	"tracerstudy-auth-service/modules/user/service"
 	"tracerstudy-auth-service/pb"
 
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -32,7 +33,11 @@ func (uh *UserHandler) GetAllUser(ctx context.Context, req *emptypb.Empty) (*pb.
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserHandler - GetAllUser] Error while get all user: ", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAllUsersResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var userArr []*pb.User
@@ -53,11 +58,19 @@ func (uh *UserHandler) GetUserById(ctx context.Context, req *pb.GetUserByIdReque
 	if err != nil {
 		if user == nil {
 			log.Println("WARNING: [UserHandler - GetUserById] Resource user not found for ID:", req.GetId())
-			return nil, status.Errorf(status.Code(err), "user not found")
+			// return nil, status.Errorf(codes.NotFound, "user not found")
+			return &pb.GetUserResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "user not found",
+			}, status.Errorf(codes.NotFound, "user not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserHandler - GetUserById] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userProto := entity.ConvertEntityToProto(user)
@@ -75,7 +88,11 @@ func (uh *UserHandler) CreateUser(ctx context.Context, req *pb.User) (*pb.GetUse
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserHandler - CreateUser] Error while create user: ", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userProto := entity.ConvertEntityToProto(user)
@@ -100,7 +117,11 @@ func (uh *UserHandler) UpdateUser(ctx context.Context, req *pb.User) (*pb.GetUse
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserHandler - UpdateUser] Error while update user: ", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userProto := entity.ConvertEntityToProto(user)
@@ -117,7 +138,11 @@ func (uh *UserHandler) DeleteUser(ctx context.Context, req *pb.GetUserByIdReques
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserHandler - DeleteUser] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.DeleteUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	return &pb.DeleteUserResponse{
