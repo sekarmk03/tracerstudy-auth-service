@@ -47,23 +47,40 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 	if err != nil {
 		if mhs == nil {
 			log.Println("WARNING: [AuthHandler - Login] Mhs resource not found")
-			return nil, status.Errorf(codes.NotFound, "mhs resource not found")
+			// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
+			return &pb.LoginResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "mhs resource not found",
+			}, status.Errorf(codes.NotFound, "mhs resource not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - Login] Error while fetching mhs biodata:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	if mhs == nil {
 		log.Println("WARNING: [AuthHandler - Login] Mhs resource not found")
-		return nil, status.Errorf(codes.NotFound, "mhs resource not found")
+		// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusNotFound),
+			Message: "mhs resource not found",
+		}, status.Errorf(codes.NotFound, "mhs resource not found")
 	}
 
 	// generate token with role 6 = alumni
 	token, err := ah.jwtManager.GenerateToken(mhs.GetData().NIM, 6)
 	if err != nil {
-		log.Println("ERROR: [AuthHandler - Login] Error while generating token:", err)
-		return nil, status.Errorf(codes.Internal, "token failed to generate: %v", err)
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [AuthHandler - Login] Error while generating token:", parseError.Message)
+		// return nil, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: "token failed to generate: " + parseError.Message,
+		}, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
 	}
 
 	return &pb.LoginResponse{
@@ -78,23 +95,40 @@ func (ah *AuthHandler) LoginUserStudy(ctx context.Context, req *pb.LoginUserStud
 	if err != nil {
 		if user.GetNims() == nil || len(user.GetNims()) == 0 {
 			log.Println("WARNING: [AuthHandler - LoginUserStudy] User resource not found")
-			return nil, status.Errorf(codes.NotFound, "user resource not found")
+			// return nil, status.Errorf(codes.NotFound, "user resource not found")
+			return &pb.LoginResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "user resource not found",
+			}, status.Errorf(codes.NotFound, "user resource not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginUserStudy] Error while fetching user:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	if user.GetNims() == nil || len(user.GetNims()) == 0 {
 		log.Println("WARNING: [AuthHandler - LoginUserStudy] User resource not found")
-		return nil, status.Errorf(codes.NotFound, "user resource not found")
+		// return nil, status.Errorf(codes.NotFound, "user resource not found")
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusNotFound),
+			Message: "user resource not found",
+		}, status.Errorf(codes.NotFound, "user resource not found")
 	}
 
 	// generate token with role 7 = user study
 	token, err := ah.jwtManager.GenerateToken(req.GetEmailAtasan(), 7)
 	if err != nil {
-		log.Println("ERROR: [AuthHandler - LoginUserStudy] Error while generating token:", err)
-		return nil, status.Errorf(codes.Internal, "token failed to generate: %v", err)
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [AuthHandler - LoginUserStudy] Error while generating token:", parseError.Message)
+		// return nil, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: "token failed to generate: " + parseError.Message,
+		}, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
 	}
 
 	return &pb.LoginResponse{
@@ -108,29 +142,50 @@ func (ah *AuthHandler) LoginUser(ctx context.Context, req *pb.LoginUserRequest) 
 	user, err := ah.userSvc.FindByUsername(ctx, req.GetUsername())
 	if err != nil {
 		if user == nil {
-			log.Println("WARNING: [AuthHandler - LoginUser] User resource not found")
-			return nil, status.Errorf(codes.NotFound, "user resource not found")
+			log.Println("WARNING: [AuthHandler - LoginUser] User not found")
+			// return nil, status.Errorf(codes.NotFound, "user not found")
+			return &pb.LoginResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "user not found",
+			}, status.Errorf(codes.NotFound, "user not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginUser] Error while fetching user:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	if user == nil {
 		log.Println("WARNING: [AuthHandler - LoginUser] User resource not found")
-		return nil, status.Errorf(codes.NotFound, "user resource not found")
+		// return nil, status.Errorf(codes.NotFound, "user resource not found")
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusNotFound),
+			Message: "user not found",
+		}, status.Errorf(codes.NotFound, "user not found")
 	}
 
 	match := utils.CheckPasswordHash(req.GetPassword(), user.Password)
 	if !match {
 		log.Println("WARNING: [AuthHandler - LoginUser] Invalid credentials")
-		return nil, status.Errorf(codes.Unauthenticated, "invalid credentials")
+		// return nil, status.Errorf(codes.Unauthenticated, "invalid credentials")
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusUnauthorized),
+			Message: "invalid credentials",
+		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 
 	token, err := ah.jwtManager.GenerateToken(user.Username, user.RoleId)
 	if err != nil {
-		log.Println("ERROR: [AuthHandler - LoginUser] Error while generating token:", err)
-		return nil, status.Errorf(codes.Internal, "token failed to generate: %v", err)
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [AuthHandler - LoginUser] Error while generating token:", parseError.Message)
+		// return nil, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
+		return &pb.LoginResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: "token failed to generate: " + parseError.Message,
+		}, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
 	}
 
 	return &pb.LoginResponse{
@@ -145,25 +200,41 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Regi
 	if err != nil {
 		if user != nil {
 			log.Println("WARNING: [AuthHandler - RegisterUser] User already exists")
-			return nil, status.Errorf(codes.AlreadyExists, "user already exist")
+			// return nil, status.Errorf(codes.AlreadyExists, "user already exist")
+			return &pb.RegisterUserResponse{
+				Code:    uint32(http.StatusConflict),
+				Message: "user already exists",
+			}, status.Errorf(codes.AlreadyExists, "user already exists")
 		}
 		parseError := errors.ParseError(err)
 		if parseError.Code != codes.NotFound {
 			log.Println("ERROR: [AuthHandler - RegisterUser] Error while fetching user:", parseError.Message)
-			return nil, status.Errorf(parseError.Code, parseError.Message)
+			// return nil, status.Errorf(parseError.Code, parseError.Message)
+			return &pb.RegisterUserResponse{
+				Code:    uint32(http.StatusInternalServerError),
+				Message: parseError.Message,
+			}, status.Errorf(parseError.Code, parseError.Message)
 		}
 	}
 
 	if user != nil {
 		log.Println("WARNING: [AuthHandler - RegisterUser] User already exists")
-		return nil, status.Errorf(codes.AlreadyExists, "user already exists")
+		// return nil, status.Errorf(codes.AlreadyExists, "user already exists")
+		return &pb.RegisterUserResponse{
+			Code:    uint32(http.StatusConflict),
+			Message: "user already exists",
+		}, status.Errorf(codes.AlreadyExists, "user already exists")
 	}
 
 	user, err = ah.userSvc.Create(ctx, req.GetName(), req.GetUsername(), req.GetEmail(), req.GetPassword(), req.GetRoleId())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - RegisterUser] Error while creating user:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.RegisterUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userProto := &pb.User{
