@@ -46,7 +46,7 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 	mhs, err := ah.mhsSvc.FetchMhsBiodataByNim(req.GetNim())
 	if err != nil {
 		if mhs == nil {
-			log.Println("WARNING: [AuthHandler - Login] Mhs resource not found")
+			log.Println("WARNING: [AuthHandler - LoginAlumni] Mhs resource not found")
 			// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
 			return &pb.LoginResponse{
 				Code:    uint32(http.StatusNotFound),
@@ -54,7 +54,7 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 			}, status.Errorf(codes.NotFound, "mhs resource not found")
 		}
 		parseError := errors.ParseError(err)
-		log.Println("ERROR: [AuthHandler - Login] Error while fetching mhs biodata:", parseError.Message)
+		log.Println("ERROR: [AuthHandler - LoginAlumni] Error while fetching mhs biodata:", parseError.Message)
 		// return nil, status.Errorf(parseError.Code, parseError.Message)
 		return &pb.LoginResponse{
 			Code:    uint32(http.StatusInternalServerError),
@@ -63,7 +63,7 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 	}
 
 	if mhs == nil {
-		log.Println("WARNING: [AuthHandler - Login] Mhs resource not found")
+		log.Println("WARNING: [AuthHandler - LoginAlumni] Mhs resource not found")
 		// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
 		return &pb.LoginResponse{
 			Code:    uint32(http.StatusNotFound),
@@ -75,7 +75,7 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 	token, err := ah.jwtManager.GenerateToken(mhs.GetData().NIM, 6)
 	if err != nil {
 		parseError := errors.ParseError(err)
-		log.Println("ERROR: [AuthHandler - Login] Error while generating token:", parseError.Message)
+		log.Println("ERROR: [AuthHandler - LoginAlumni] Error while generating token:", parseError.Message)
 		// return nil, status.Errorf(codes.Internal, "token failed to generate: %v", parseError.Message)
 		return &pb.LoginResponse{
 			Code:    uint32(http.StatusInternalServerError),

@@ -10,6 +10,7 @@ import (
 	"tracerstudy-auth-service/server"
 
 	authModule "tracerstudy-auth-service/modules/auth"
+	userModule "tracerstudy-auth-service/modules/user"
 
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -42,6 +43,7 @@ func main() {
 
 func registerGrpcHandlers(server *grpc.Server, cfg config.Config, db *gorm.DB, jwtManager *commonJwt.JWT, grpcConn *grpc.ClientConn) {
 	authModule.InitGrpc(server, cfg, db, jwtManager, grpcConn)
+	userModule.InitGrpc(server, cfg, db, grpcConn)
 }
 
 func checkError(err error) {

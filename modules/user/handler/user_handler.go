@@ -28,7 +28,7 @@ func NewUserHandler(config config.Config, userService service.UserServiceUseCase
 	}
 }
 
-func (uh *UserHandler) GetAllUser(ctx context.Context, req *emptypb.Empty) (*pb.GetAllUsersResponse, error) {
+func (uh *UserHandler) GetAllUsers(ctx context.Context, req *emptypb.Empty) (*pb.GetAllUsersResponse, error) {
 	user, err := uh.userSvc.FindAll(ctx, req)
 	if err != nil {
 		parseError := errors.ParseError(err)
