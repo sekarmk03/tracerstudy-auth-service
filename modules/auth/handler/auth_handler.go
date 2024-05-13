@@ -172,9 +172,9 @@ func (ah *AuthHandler) LoginUser(ctx context.Context, req *pb.LoginUserRequest) 
 		log.Println("WARNING: [AuthHandler - LoginUser] Invalid credentials")
 		// return nil, status.Errorf(codes.Unauthenticated, "invalid credentials")
 		return &pb.LoginResponse{
-			Code:    uint32(http.StatusUnauthorized),
+			Code:    uint32(http.StatusBadRequest),
 			Message: "invalid credentials",
-		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
+		}, status.Errorf(codes.InvalidArgument, "invalid credentials")
 	}
 
 	token, err := ah.jwtManager.GenerateToken(user.Username, user.RoleId)
