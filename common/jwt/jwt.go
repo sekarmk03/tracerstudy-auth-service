@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	// "google.golang.org/grpc/codes"
-	// "google.golang.org/grpc/status"
 )
 
 type JWT struct {
@@ -17,7 +15,7 @@ type JWT struct {
 
 type CustomClaims struct {
 	StandardClaims jwt.StandardClaims
-	Nim            string `json:"nim"`
+	Cred            string `json:"cred"`
 	Role           uint32 `json:"role"`
 }
 
@@ -28,12 +26,12 @@ func NewJWT(secretKey string, tokenDuration time.Duration) *JWT {
 	}
 }
 
-func (j *JWT) GenerateToken(nim string, role uint32) (string, error) {
+func (j *JWT) GenerateToken(cred string, role uint32) (string, error) {
 	claims := &CustomClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(j.tokenDuration).Unix(),
 		},
-		Nim:  nim,
+		Cred:  cred,
 		Role: role,
 	}
 

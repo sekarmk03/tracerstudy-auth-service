@@ -3,6 +3,7 @@ package interceptor
 import (
 	"context"
 	"log"
+	"strings"
 
 	commonJwt "tracerstudy-auth-service/common/jwt"
 
@@ -54,7 +55,14 @@ func (a *AuthInterceptor) authorize(ctx context.Context, method string) error {
 		return status.Errorf(codes.Unauthenticated, "authorization token is not provided")
 	}
 
-	accessToken := values[0]
+	authHeader := values[0]
+	parts := strings.Fields(authHeader)
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		log.Println("ERROR: [Auth Interceptor - Authorize] Authorization token in wrong format")
+		return status.Errorf(codes.Unauthenticated, "authorization token is invalid")
+	}
+
+	accessToken := parts[1]
 	claims, err := a.jwtManager.Verify(accessToken)
 	if err != nil {
 		log.Println("ERROR: [Auth Interceptor - Authorize] Access token is invalid:", err)

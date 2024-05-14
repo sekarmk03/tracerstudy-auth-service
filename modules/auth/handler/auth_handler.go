@@ -71,8 +71,9 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 		}, status.Errorf(codes.NotFound, "mhs resource not found")
 	}
 
-	// generate token with role 6 = alumni
+	// generate token with cred = nim, role = 6 (alumni)
 	token, err := ah.jwtManager.GenerateToken(mhs.GetData().NIM, 6)
+
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginAlumni] Error while generating token:", parseError.Message)
@@ -119,8 +120,9 @@ func (ah *AuthHandler) LoginUserStudy(ctx context.Context, req *pb.LoginUserStud
 		}, status.Errorf(codes.NotFound, "user resource not found")
 	}
 
-	// generate token with role 7 = user study
+	// generate token with cred = email, role = 7 (pengguna alumni)
 	token, err := ah.jwtManager.GenerateToken(req.GetEmailAtasan(), 7)
+
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginUserStudy] Error while generating token:", parseError.Message)
@@ -177,7 +179,9 @@ func (ah *AuthHandler) LoginUser(ctx context.Context, req *pb.LoginUserRequest) 
 		}, status.Errorf(codes.InvalidArgument, "invalid credentials")
 	}
 
+	// generate token with cred = username, role = roleId
 	token, err := ah.jwtManager.GenerateToken(user.Username, user.RoleId)
+
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginUser] Error while generating token:", parseError.Message)
