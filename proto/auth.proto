@@ -4,6 +4,7 @@ package tracer_study_grpc;
 option go_package = "./;pb";
 
 import "user.proto";
+import "google/protobuf/empty.proto";
 
 message LoginAlumniRequest {
     string nim = 1;
@@ -27,15 +28,16 @@ message LoginUserRequest {
     string password = 2;
 }
 
-message RegisterUserResponse {
+message SingleUserResponse {
     uint32 code = 1;
     string message = 2;
     User data = 3;
 }
 
 service AuthService {
-    rpc LoginAlumni(LoginAlumniRequest) returns (LoginResponse);
-    rpc LoginUserStudy(LoginUserStudyRequest) returns (LoginResponse);
-    rpc LoginUser(LoginUserRequest) returns (LoginResponse);
-    rpc RegisterUser(User) returns (RegisterUserResponse);
+    rpc LoginAlumni(LoginAlumniRequest) returns (LoginResponse) {};
+    rpc LoginUserStudy(LoginUserStudyRequest) returns (LoginResponse) {};
+    rpc LoginUser(LoginUserRequest) returns (LoginResponse) {};
+    rpc RegisterUser(User) returns (SingleUserResponse) {};
+    rpc GetCurrentUser(google.protobuf.Empty) returns (SingleUserResponse) {};
 }

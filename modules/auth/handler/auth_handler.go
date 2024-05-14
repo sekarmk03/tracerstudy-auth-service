@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strings"
 	"tracerstudy-auth-service/common/config"
 	"tracerstudy-auth-service/common/errors"
 	commonJwt "tracerstudy-auth-service/common/jwt"
@@ -14,7 +15,9 @@ import (
 	"tracerstudy-auth-service/pb"
 
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type AuthHandler struct {
@@ -199,13 +202,13 @@ func (ah *AuthHandler) LoginUser(ctx context.Context, req *pb.LoginUserRequest) 
 	}, nil
 }
 
-func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.RegisterUserResponse, error) {
+func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.SingleUserResponse, error) {
 	user, err := ah.userSvc.FindByUsername(ctx, req.GetUsername())
 	if err != nil {
 		if user != nil {
 			log.Println("WARNING: [AuthHandler - RegisterUser] User already exists")
 			// return nil, status.Errorf(codes.AlreadyExists, "user already exist")
-			return &pb.RegisterUserResponse{
+			return &pb.SingleUserResponse{
 				Code:    uint32(http.StatusConflict),
 				Message: "user already exists",
 			}, status.Errorf(codes.AlreadyExists, "user already exists")
@@ -214,7 +217,7 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Regi
 		if parseError.Code != codes.NotFound {
 			log.Println("ERROR: [AuthHandler - RegisterUser] Error while fetching user:", parseError.Message)
 			// return nil, status.Errorf(parseError.Code, parseError.Message)
-			return &pb.RegisterUserResponse{
+			return &pb.SingleUserResponse{
 				Code:    uint32(http.StatusInternalServerError),
 				Message: parseError.Message,
 			}, status.Errorf(parseError.Code, parseError.Message)
@@ -224,7 +227,7 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Regi
 	if user != nil {
 		log.Println("WARNING: [AuthHandler - RegisterUser] User already exists")
 		// return nil, status.Errorf(codes.AlreadyExists, "user already exists")
-		return &pb.RegisterUserResponse{
+		return &pb.SingleUserResponse{
 			Code:    uint32(http.StatusConflict),
 			Message: "user already exists",
 		}, status.Errorf(codes.AlreadyExists, "user already exists")
@@ -235,7 +238,7 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Regi
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - RegisterUser] Error while creating user:", parseError.Message)
 		// return nil, status.Errorf(parseError.Code, parseError.Message)
-		return &pb.RegisterUserResponse{
+		return &pb.SingleUserResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
 		}, status.Errorf(parseError.Code, parseError.Message)
@@ -249,9 +252,80 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Regi
 		RoleId:   user.RoleId,
 	}
 
-	return &pb.RegisterUserResponse{
+	return &pb.SingleUserResponse{
 		Code:    uint32(http.StatusCreated),
 		Message: "register user success",
+		Data:    userProto,
+	}, nil
+}
+
+func (ah *AuthHandler) GetCurrentUser(ctx context.Context, req *emptypb.Empty) (*pb.SingleUserResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		log.Println("ERROR: [AuthHandler - GetCurrentUser] No metadata found")
+		return &pb.SingleUserResponse{
+			Code:    uint32(http.StatusBadRequest),
+			Message: "no metadata found",
+		}, status.Errorf(codes.InvalidArgument, "no metadata found")
+	}
+
+	values, ok := md["authorization"]
+	if !ok || len(values) == 0 {
+		log.Println("ERROR: [AuthHandler - GetCurrentUser] No authorization header found")
+		return &pb.SingleUserResponse{
+			Code:    uint32(http.StatusBadRequest),
+			Message: "no authorization header found",
+		}, status.Errorf(codes.InvalidArgument, "no authorization header found")
+	}
+
+	authHeader := values[0]
+	parts := strings.Fields(authHeader)
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		log.Println("ERROR: [AuthHandler - GetCurrentUser] Invalid authorization header")
+		return &pb.SingleUserResponse{
+			Code:    uint32(http.StatusBadRequest),
+			Message: "invalid authorization header",
+		}, status.Errorf(codes.InvalidArgument, "invalid authorization header")
+	}
+
+	accessToken := parts[1]
+	claims, err := ah.jwtManager.Verify(accessToken)
+	if err != nil {
+		log.Println("ERROR: [AuthHandler - GetCurrentUser] Invalid token:", err)
+		return &pb.SingleUserResponse{
+			Code:    uint32(http.StatusUnauthorized),
+			Message: "invalid token",
+		}, status.Errorf(codes.Unauthenticated, "invalid token")
+	}
+
+	user, err := ah.userSvc.FindByUsername(ctx, claims.Cred)
+	if err != nil {
+		if user == nil {
+			log.Println("WARNING: [AuthHandler - GetCurrentUser] User not found")
+			return &pb.SingleUserResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "user not found",
+			}, status.Errorf(codes.NotFound, "user not found")
+		}
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [AuthHandler - GetCurrentUser] Error while fetching user:", parseError.Message)
+		return &pb.SingleUserResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	userProto := &pb.User{
+		Id:       user.Id,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		RoleId:   user.RoleId,
+	}
+
+	return &pb.SingleUserResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get current user success",
 		Data:    userProto,
 	}, nil
 }
