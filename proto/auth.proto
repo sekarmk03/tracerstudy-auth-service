@@ -7,7 +7,7 @@ import "user.proto";
 
 message LoginAlumniRequest {
     string nim = 1;
-    string tgl_sidang = 2;
+    string tanggal_sidang = 2;
 }
 
 message LoginUserStudyRequest {

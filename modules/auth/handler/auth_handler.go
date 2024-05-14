@@ -43,7 +43,7 @@ func NewAuthHandler(
 }
 
 func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniRequest) (*pb.LoginResponse, error) {
-	mhs, err := ah.mhsSvc.FetchMhsBiodataByNim(req.GetNim())
+	mhs, err := ah.mhsSvc.FetchMhsBiodataByNim(req.GetNim()) // get tanggal sidang later
 	if err != nil {
 		if mhs == nil {
 			log.Println("WARNING: [AuthHandler - LoginAlumni] Mhs resource not found")
