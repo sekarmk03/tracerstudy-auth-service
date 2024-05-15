@@ -124,7 +124,14 @@ func (svc *UserService) Update(ctx context.Context, id uint64, fields *entity.Us
 }
 
 func (svc *UserService) Delete(ctx context.Context, id uint64) error {
-	err := svc.userRepository.Delete(ctx, id)
+	_, err := svc.userRepository.FindById(ctx, id)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserService - Update] Error while find user by ID: ", parseError.Message)
+		return err
+	}
+
+	err = svc.userRepository.Delete(ctx, id)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserService - Delete] Error while delete user: ", parseError.Message)

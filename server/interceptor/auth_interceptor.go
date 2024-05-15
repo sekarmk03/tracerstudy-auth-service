@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	commonJwt "tracerstudy-auth-service/common/jwt"
+	"tracerstudy-auth-service/common/utils"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -43,19 +43,12 @@ func (a *AuthInterceptor) authorize(ctx context.Context, method string) error {
 		return nil
 	}
 
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		log.Println("ERROR: [Auth Interceptor - Authorize] Metadata is not provided")
-		return status.Errorf(codes.Unauthenticated, "metadata is not provided")
+	authHeader, err := utils.GetMetadataAuthorization(ctx)
+	if err != nil {
+		log.Println("ERROR: [Auth Interceptor - Authorize] Error while getting metadata authorization:", err)
+		return status.Errorf(codes.Unauthenticated, "error while get metadata authorization: %v", err)
 	}
 
-	values, ok := md["authorization"]
-	if !ok || len(values) == 0 {
-		log.Println("ERROR: [Auth Interceptor - Authorize] Authorization token is not provided")
-		return status.Errorf(codes.Unauthenticated, "authorization token is not provided")
-	}
-
-	authHeader := values[0]
 	parts := strings.Fields(authHeader)
 	if len(parts) != 2 || parts[0] != "Bearer" {
 		log.Println("ERROR: [Auth Interceptor - Authorize] Authorization token in wrong format")
@@ -63,6 +56,7 @@ func (a *AuthInterceptor) authorize(ctx context.Context, method string) error {
 	}
 
 	accessToken := parts[1]
+
 	claims, err := a.jwtManager.Verify(accessToken)
 	if err != nil {
 		log.Println("ERROR: [Auth Interceptor - Authorize] Access token is invalid:", err)

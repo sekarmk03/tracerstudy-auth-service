@@ -246,11 +246,11 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Sing
 	}
 
 	userProto := &pb.User{
-		Id:       user.Id,
-		Name:     user.Name,
-		Username: user.Username,
-		Email:    user.Email,
-		RoleId:   user.RoleId,
+		Id:        user.Id,
+		Name:      user.Name,
+		Username:  user.Username,
+		Email:     user.Email,
+		RoleId:    user.RoleId,
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}
