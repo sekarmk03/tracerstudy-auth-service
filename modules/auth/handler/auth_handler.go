@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AuthHandler struct {
@@ -250,6 +251,8 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Sing
 		Username: user.Username,
 		Email:    user.Email,
 		RoleId:   user.RoleId,
+		CreatedAt: timestamppb.New(user.CreatedAt),
+		UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}
 
 	return &pb.SingleUserResponse{

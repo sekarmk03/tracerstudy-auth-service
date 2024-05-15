@@ -21,6 +21,7 @@ const (
 var roles = AccessibleRoles{
 	"/" + BasePath + "." + AuthSvc + "/": {
 		"RegisterUser": {1, 2},
+		"GetCurrentUser": {1, 2, 3, 4, 5},
 	},
 	"/" + BasePath + "." + UserSvc + "/": {
 		"GetAllUser":  {1, 2},
