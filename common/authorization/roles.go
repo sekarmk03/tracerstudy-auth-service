@@ -7,9 +7,10 @@ type AccessibleRoles map[string]map[string][]uint32
 	2. Admin
 	3. Manager
 	4. Executive
-	5. Prodi
+	5. Admin Prodi
 	6. Alumni
 	7. Pengguna Alumni
+	8. Admin Post
 */
 
 const (
@@ -21,7 +22,7 @@ const (
 var roles = AccessibleRoles{
 	"/" + BasePath + "." + AuthSvc + "/": {
 		"RegisterUser":   {1, 2},
-		"GetCurrentUser": {1, 2, 3, 4, 5},
+		"GetCurrentUser": {1, 2, 3, 4, 5, 6, 7, 8},
 	},
 	"/" + BasePath + "." + UserSvc + "/": {
 		"GetAllUser":  {1, 2},
