@@ -3,7 +3,7 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-message MhsBiodata {
+message MhsBiodataApi {
     string NIM = 1;
     string NAMA = 2;
     string IPK = 3;
@@ -21,18 +21,26 @@ message MhsBiodata {
     string LAMASTD = 15;
     string TGLSIDANG = 16;
     string KODEJK = 17;
+    string KODESTATUS = 18;
 }
 
-message MhsBiodataRequest {
+message MhsBiodataApiRequest {
     string nim = 1;
 }
 
-message MhsBiodataResponse {
+message MhsBiodataApiResponse {
     uint32 code = 1;
     string message = 2;
-    MhsBiodata data = 3;
+    MhsBiodataApi data = 3;
 }
 
-service MhsBiodataService {
-    rpc FetchMhsBiodataByNim(MhsBiodataRequest) returns (MhsBiodataResponse) {};
+message CheckMhsAlumniResponse {
+    uint32 code = 1;
+    string message = 2;
+    bool isAlumni = 3;
+}
+
+service MhsBiodataApiService {
+    rpc FetchMhsBiodataByNim(MhsBiodataApiRequest) returns (MhsBiodataApiResponse) {};
+    rpc CheckMhsAlumni(MhsBiodataApiRequest) returns (CheckMhsAlumniResponse) {};
 }

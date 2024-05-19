@@ -27,7 +27,7 @@ type AuthHandler struct {
 	userSvc    userSvc.UserServiceUseCase
 	jwtManager *commonJwt.JWT
 	pktsSvc    client.PktsServiceClient
-	mhsSvc     client.MhsBiodataServiceClient
+	mhsApiSvc     client.MhsBiodataApiServiceClient
 }
 
 func NewAuthHandler(
@@ -35,30 +35,22 @@ func NewAuthHandler(
 	userService userSvc.UserServiceUseCase,
 	jwtManager *commonJwt.JWT,
 	pktsService client.PktsServiceClient,
-	mhsService client.MhsBiodataServiceClient,
+	mhsApiService client.MhsBiodataApiServiceClient,
 ) *AuthHandler {
 	return &AuthHandler{
 		config:     config,
 		userSvc:    userService,
 		jwtManager: jwtManager,
 		pktsSvc:    pktsService,
-		mhsSvc:     mhsService,
+		mhsApiSvc:     mhsApiService,
 	}
 }
 
 func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniRequest) (*pb.LoginResponse, error) {
-	mhs, err := ah.mhsSvc.FetchMhsBiodataByNim(req.GetNim()) // get tanggal sidang later
+	res, err := ah.mhsApiSvc.CheckMhsAlumni(req.GetNim())
 	if err != nil {
-		if mhs == nil {
-			log.Println("WARNING: [AuthHandler - LoginAlumni] Mhs resource not found")
-			// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
-			return &pb.LoginResponse{
-				Code:    uint32(http.StatusNotFound),
-				Message: "mhs resource not found",
-			}, status.Errorf(codes.NotFound, "mhs resource not found")
-		}
 		parseError := errors.ParseError(err)
-		log.Println("ERROR: [AuthHandler - LoginAlumni] Error while fetching mhs biodata:", parseError.Message)
+		log.Println("ERROR: [AuthHandler - LoginAlumni] Error checking mhs biodata:", parseError.Message)
 		// return nil, status.Errorf(parseError.Code, parseError.Message)
 		return &pb.LoginResponse{
 			Code:    uint32(http.StatusInternalServerError),
@@ -66,17 +58,17 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
-	if mhs == nil {
-		log.Println("WARNING: [AuthHandler - LoginAlumni] Mhs resource not found")
-		// return nil, status.Errorf(codes.NotFound, "mhs resource not found")
+	if !res.GetIsAlumni() {
+		log.Println("WARNING: [AuthHandler - LoginAlumni] Mahasiswa is not an alumni")
+		// return nil, status.Errorf(codes.PermissionDenied, "mahasiswa is not an alumni")
 		return &pb.LoginResponse{
-			Code:    uint32(http.StatusNotFound),
-			Message: "mhs resource not found",
-		}, status.Errorf(codes.NotFound, "mhs resource not found")
+			Code:    uint32(http.StatusForbidden),
+			Message: "mahasiswa is not an alumni",
+		}, status.Errorf(codes.PermissionDenied, "mahasiswa is not an alumni")
 	}
 
 	// generate token with cred = nim, role = 6 (alumni)
-	token, err := ah.jwtManager.GenerateToken(mhs.GetData().NIM, 6)
+	token, err := ah.jwtManager.GenerateToken(req.GetNim(), 6)
 
 	if err != nil {
 		parseError := errors.ParseError(err)
