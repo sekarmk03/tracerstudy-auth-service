@@ -27,7 +27,7 @@ type AuthHandler struct {
 	userSvc    userSvc.UserServiceUseCase
 	jwtManager *commonJwt.JWT
 	pktsSvc    client.PktsServiceClient
-	mhsApiSvc     client.MhsBiodataApiServiceClient
+	mhsApiSvc  client.MhsBiodataApiServiceClient
 }
 
 func NewAuthHandler(
@@ -42,7 +42,7 @@ func NewAuthHandler(
 		userSvc:    userService,
 		jwtManager: jwtManager,
 		pktsSvc:    pktsService,
-		mhsApiSvc:     mhsApiService,
+		mhsApiSvc:  mhsApiService,
 	}
 }
 
