@@ -27,6 +27,7 @@ const (
 	PKTSService_GetNimByDataAtasan_FullMethodName  = "/tracer_study_grpc.PKTSService/GetNimByDataAtasan"
 	PKTSService_ExportPKTSReport_FullMethodName    = "/tracer_study_grpc.PKTSService/ExportPKTSReport"
 	PKTSService_GetPKTSRekapByProdi_FullMethodName = "/tracer_study_grpc.PKTSService/GetPKTSRekapByProdi"
+	PKTSService_GetPKTSRekapByYear_FullMethodName  = "/tracer_study_grpc.PKTSService/GetPKTSRekapByYear"
 )
 
 // PKTSServiceClient is the client API for PKTSService service.
@@ -40,6 +41,7 @@ type PKTSServiceClient interface {
 	GetNimByDataAtasan(ctx context.Context, in *GetNimByDataAtasanRequest, opts ...grpc.CallOption) (*GetNimByDataAtasanResponse, error)
 	ExportPKTSReport(ctx context.Context, in *ExportPKTSReportRequest, opts ...grpc.CallOption) (*ExportPKTSReportResponse, error)
 	GetPKTSRekapByProdi(ctx context.Context, in *GetPKTSRekapByProdiRequest, opts ...grpc.CallOption) (*GetPKTSRekapByProdiResponse, error)
+	GetPKTSRekapByYear(ctx context.Context, in *GetPKTSRekapByYearRequest, opts ...grpc.CallOption) (*GetPKTSRekapByYearResponse, error)
 }
 
 type pKTSServiceClient struct {
@@ -113,6 +115,15 @@ func (c *pKTSServiceClient) GetPKTSRekapByProdi(ctx context.Context, in *GetPKTS
 	return out, nil
 }
 
+func (c *pKTSServiceClient) GetPKTSRekapByYear(ctx context.Context, in *GetPKTSRekapByYearRequest, opts ...grpc.CallOption) (*GetPKTSRekapByYearResponse, error) {
+	out := new(GetPKTSRekapByYearResponse)
+	err := c.cc.Invoke(ctx, PKTSService_GetPKTSRekapByYear_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PKTSServiceServer is the server API for PKTSService service.
 // All implementations must embed UnimplementedPKTSServiceServer
 // for forward compatibility
@@ -124,6 +135,7 @@ type PKTSServiceServer interface {
 	GetNimByDataAtasan(context.Context, *GetNimByDataAtasanRequest) (*GetNimByDataAtasanResponse, error)
 	ExportPKTSReport(context.Context, *ExportPKTSReportRequest) (*ExportPKTSReportResponse, error)
 	GetPKTSRekapByProdi(context.Context, *GetPKTSRekapByProdiRequest) (*GetPKTSRekapByProdiResponse, error)
+	GetPKTSRekapByYear(context.Context, *GetPKTSRekapByYearRequest) (*GetPKTSRekapByYearResponse, error)
 	mustEmbedUnimplementedPKTSServiceServer()
 }
 
@@ -151,6 +163,9 @@ func (UnimplementedPKTSServiceServer) ExportPKTSReport(context.Context, *ExportP
 }
 func (UnimplementedPKTSServiceServer) GetPKTSRekapByProdi(context.Context, *GetPKTSRekapByProdiRequest) (*GetPKTSRekapByProdiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPKTSRekapByProdi not implemented")
+}
+func (UnimplementedPKTSServiceServer) GetPKTSRekapByYear(context.Context, *GetPKTSRekapByYearRequest) (*GetPKTSRekapByYearResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPKTSRekapByYear not implemented")
 }
 func (UnimplementedPKTSServiceServer) mustEmbedUnimplementedPKTSServiceServer() {}
 
@@ -291,6 +306,24 @@ func _PKTSService_GetPKTSRekapByProdi_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PKTSService_GetPKTSRekapByYear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPKTSRekapByYearRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PKTSServiceServer).GetPKTSRekapByYear(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PKTSService_GetPKTSRekapByYear_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PKTSServiceServer).GetPKTSRekapByYear(ctx, req.(*GetPKTSRekapByYearRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PKTSService_ServiceDesc is the grpc.ServiceDesc for PKTSService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -325,6 +358,10 @@ var PKTSService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPKTSRekapByProdi",
 			Handler:    _PKTSService_GetPKTSRekapByProdi_Handler,
+		},
+		{
+			MethodName: "GetPKTSRekapByYear",
+			Handler:    _PKTSService_GetPKTSRekapByYear_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -108,16 +108,16 @@ message PKTSRekapByProdi {
     string status = 4;
     string email = 5;
     string hp = 6;
-    string tgl_sidang = 7;
+    string tanggal_sidang = 7;
     string pkts_status = 8;
     string prov_kerja = 9;
-    string ump12 = 10;
+    string ump_pkts = 10;
     string penghasilan = 11;
     google.protobuf.Timestamp input_pkts = 12;
     google.protobuf.Timestamp update_pkts = 13;
 }
 
-message PKTSRekapAll {
+message PKTSRekapByYear {
     string fakultas = 1;
     string kode_prodi = 2;
     string nama_prodi = 3;
@@ -125,14 +125,12 @@ message PKTSRekapAll {
     uint32 alumni_count = 5;
     uint32 pkts_count = 6;
     double pkts_percentage = 7;
-    uint32 lanjut_studi_count = 8;
-    uint32 kerja_count = 9;
-    uint32 kerja_ump_pkts_count = 10;
-    double kerja_ump_pkts_percentage = 11;
-    uint32 wirausaha_count = 12;
-    uint32 wirausaha_ump_pkts_count = 13;
-    double wirausaha_ump_pkts_percentage = 14;
-    uint32 lainnya_count = 15;
+    uint32 status_lanjutstudi_count = 8;
+    uint32 status_hasincome_count = 9;
+    uint32 hasincome_ump_count = 10;
+    double hasincome_ump_percentage = 11;
+    uint32 status_lainnya_count = 12;
+    double status_lainnya_percentage = 13;
 }
 
 message GetAllPKTSResponse {
@@ -171,12 +169,23 @@ message ExportPKTSReportResponse {
 
 message GetPKTSRekapByProdiRequest {
     string kodeprodi = 1;
+    string tahun_sidang = 2;
 }
 
 message GetPKTSRekapByProdiResponse {
     uint32 code = 1;
     string message = 2;
     repeated PKTSRekapByProdi data = 3;
+}
+
+message GetPKTSRekapByYearRequest {
+    string tahun_sidang = 1;
+}
+
+message GetPKTSRekapByYearResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated PKTSRekapByYear data = 3;
 }
 
 message ExportPKTSReportRequest {
@@ -191,4 +200,5 @@ service PKTSService {
     rpc GetNimByDataAtasan(GetNimByDataAtasanRequest) returns (GetNimByDataAtasanResponse);
     rpc ExportPKTSReport(ExportPKTSReportRequest) returns (ExportPKTSReportResponse);
     rpc GetPKTSRekapByProdi(GetPKTSRekapByProdiRequest) returns (GetPKTSRekapByProdiResponse);
+    rpc GetPKTSRekapByYear(GetPKTSRekapByYearRequest) returns (GetPKTSRekapByYearResponse);
 }
