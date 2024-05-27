@@ -4,8 +4,6 @@ import (
 	"context"
 	"tracerstudy-auth-service/pb"
 	"tracerstudy-auth-service/server"
-
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type PktsServiceClient struct {
@@ -20,10 +18,6 @@ func BuildPktsServiceClient(url string) PktsServiceClient {
 	}
 
 	return c
-}
-
-func (c *PktsServiceClient) GetAllPkts() (*pb.GetAllPKTSResponse, error) {
-	return c.Client.GetAllPKTS(context.Background(), &emptypb.Empty{})
 }
 
 func (c *PktsServiceClient) GetNimByDataAtasan(nama, email, hp string) (*pb.GetNimByDataAtasanResponse, error) {

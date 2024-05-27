@@ -11,6 +11,7 @@ import (
 	"tracerstudy-auth-service/common/utils"
 
 	"tracerstudy-auth-service/modules/auth/client"
+	"tracerstudy-auth-service/modules/user/entity"
 	userSvc "tracerstudy-auth-service/modules/user/service"
 	"tracerstudy-auth-service/pb"
 
@@ -18,7 +19,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AuthHandler struct {
@@ -237,15 +237,7 @@ func (ah *AuthHandler) RegisterUser(ctx context.Context, req *pb.User) (*pb.Sing
 		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
-	userProto := &pb.User{
-		Id:        user.Id,
-		Name:      user.Name,
-		Username:  user.Username,
-		Email:     user.Email,
-		RoleId:    user.RoleId,
-		CreatedAt: timestamppb.New(user.CreatedAt),
-		UpdatedAt: timestamppb.New(user.UpdatedAt),
-	}
+	userProto := entity.ConvertEntityToProto(user)
 
 	return &pb.SingleUserResponse{
 		Code:    uint32(http.StatusCreated),

@@ -4,7 +4,6 @@ import (
 	"time"
 	"tracerstudy-auth-service/pb"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
@@ -49,7 +48,7 @@ func ConvertEntityToProto(u *User) *pb.User {
 		Email:     u.Email,
 		Password:  u.Password,
 		RoleId:    u.RoleId,
-		CreatedAt: timestamppb.New(u.CreatedAt),
-		UpdatedAt: timestamppb.New(u.UpdatedAt),
+		CreatedAt: u.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: u.UpdatedAt.Format(time.RFC3339),
 	}
 }

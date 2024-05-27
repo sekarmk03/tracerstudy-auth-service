@@ -3,8 +3,7 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
+import "pagination.proto";
 
 message PKTS {
     uint64 id = 1;
@@ -95,10 +94,10 @@ message PKTS {
     string email_atasan = 86;
     string tinggal_selama_kuliah = 87;
     string code = 88;
-    google.protobuf.Timestamp mail_sent = 89;
-    google.protobuf.Timestamp created_at = 90;
-    google.protobuf.Timestamp updated_at = 91;
-    google.protobuf.Timestamp deleted_at = 92;
+    string mail_sent = 89;
+    string created_at = 90;
+    string updated_at = 91;
+    string deleted_at = 92;
 }
 
 message PKTSRekapByProdi {
@@ -113,8 +112,8 @@ message PKTSRekapByProdi {
     string prov_kerja = 9;
     string ump_pkts = 10;
     string penghasilan = 11;
-    google.protobuf.Timestamp input_pkts = 12;
-    google.protobuf.Timestamp update_pkts = 13;
+    string input_pkts = 12;
+    string update_pkts = 13;
 }
 
 message PKTSRekapByYear {
@@ -133,10 +132,15 @@ message PKTSRekapByYear {
     double status_lainnya_percentage = 13;
 }
 
+message GetAllPKTSRequest {
+    general.PaginationRequest pagination = 1;
+}
+
 message GetAllPKTSResponse {
     uint32 code = 1;
     string message = 2;
-    repeated PKTS data = 3;
+    general.Pagination pagination = 3;
+    repeated PKTS data = 4;
 }
 
 message GetPKTSByNimRequest {
@@ -161,6 +165,10 @@ message GetNimByDataAtasanResponse {
     repeated string nims = 3;
 }
 
+message ExportPKTSReportRequest {
+    string tahun_sidang = 1;
+}
+
 message ExportPKTSReportResponse {
     uint32 code = 1;
     string message = 2;
@@ -168,32 +176,32 @@ message ExportPKTSReportResponse {
 }
 
 message GetPKTSRekapByProdiRequest {
-    string kodeprodi = 1;
-    string tahun_sidang = 2;
+    general.PaginationRequest pagination = 1;
+    string kodeprodi = 2;
+    string tahun_sidang = 3;
 }
 
 message GetPKTSRekapByProdiResponse {
     uint32 code = 1;
     string message = 2;
-    repeated PKTSRekapByProdi data = 3;
+    general.Pagination pagination = 3;
+    repeated PKTSRekapByProdi data = 4;
 }
 
 message GetPKTSRekapByYearRequest {
-    string tahun_sidang = 1;
+    general.PaginationRequest pagination = 1;
+    string tahun_sidang = 2;
 }
 
 message GetPKTSRekapByYearResponse {
     uint32 code = 1;
     string message = 2;
-    repeated PKTSRekapByYear data = 3;
-}
-
-message ExportPKTSReportRequest {
-    string tahun_sidang = 1;
+    general.Pagination pagination = 3;
+    repeated PKTSRekapByYear data = 4;
 }
 
 service PKTSService {
-    rpc GetAllPKTS(google.protobuf.Empty) returns (GetAllPKTSResponse);
+    rpc GetAllPKTS(GetAllPKTSRequest) returns (GetAllPKTSResponse);
     rpc GetPKTSByNim(GetPKTSByNimRequest) returns (GetPKTSResponse);
     rpc CreatePKTS(PKTS) returns (GetPKTSResponse);
     rpc UpdatePKTS(PKTS) returns (GetPKTSResponse);

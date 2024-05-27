@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package general;
+option go_package = "./;pb";
+
+message Pagination {
+    uint32 total_rows = 1;
+    uint32 total_pages = 2;
+    uint32 current_page = 3;
+    uint32 current_rows = 4;
+}
+
+message PaginationRequest {
+    uint32 page = 1;
+    uint32 limit = 2;
+}
