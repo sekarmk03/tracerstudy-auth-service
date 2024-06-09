@@ -2,9 +2,7 @@ package errors
 
 import (
 	"fmt"
-	// "log"
 	"strings"
-	"tracerstudy-auth-service/pb"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -30,21 +28,6 @@ func NewError(code codes.Code, message string) *Error {
 
 func (err *Error) Error() error {
 	return fmt.Errorf("%d:%s", err.Code, err.Message)
-}
-
-func (err *Error) ToProtoError() *pb.ErrorResponse {
-	return &pb.ErrorResponse{
-		Code:    uint32(err.Code),
-		Message: err.Message,
-	}
-}
-
-func ConvertErrorToErrorResponse(err error) *pb.ErrorResponse {
-	st, _ := status.FromError(err)
-	return &pb.ErrorResponse{
-		Code:    uint32(st.Code()),
-		Message: st.Message(),
-	}
 }
 
 func ParseError(err error) *Error {
