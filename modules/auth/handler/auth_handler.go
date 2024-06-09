@@ -47,7 +47,7 @@ func NewAuthHandler(
 }
 
 func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniRequest) (*pb.LoginResponse, error) {
-	res, err := ah.mhsApiSvc.CheckMhsAlumni(req.GetNim())
+	res, err := ah.mhsApiSvc.CheckMhsAlumni(req.GetNim(), req.GetTanggalSidang())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [AuthHandler - LoginAlumni] Error checking mhs biodata:", parseError.Message)
@@ -59,12 +59,13 @@ func (ah *AuthHandler) LoginAlumni(ctx context.Context, req *pb.LoginAlumniReque
 	}
 
 	if !res.GetIsAlumni() {
-		log.Println("WARNING: [AuthHandler - LoginAlumni] Mahasiswa is not an alumni")
+		message := res.GetMessage()
+		log.Println("WARNING: [AuthHandler - LoginAlumni]", message)
 		// return nil, status.Errorf(codes.PermissionDenied, "mahasiswa is not an alumni")
 		return &pb.LoginResponse{
 			Code:    uint32(http.StatusForbidden),
-			Message: "mahasiswa is not an alumni",
-		}, status.Errorf(codes.PermissionDenied, "mahasiswa is not an alumni")
+			Message: message,
+		}, status.Errorf(codes.PermissionDenied, message)
 	}
 
 	// generate token with cred = nim, role = 6 (alumni)

@@ -12,10 +12,9 @@ type Config struct {
 	ServiceName string `env:"SERVICE_NAME,default=tracer-study-grpc"`
 	Port        Port
 	MySQL       MySQL
-	// Redis       Redis
-	JWT       JWTConfig
-	SIAK_API  SIAK_API
-	ClientURL ClientURL
+	JWT         JWTConfig
+	SIAK_API    SIAK_API
+	ClientURL   ClientURL
 }
 
 type Port struct {

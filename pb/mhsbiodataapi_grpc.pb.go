@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MhsBiodataApiServiceClient interface {
 	FetchMhsBiodataByNim(ctx context.Context, in *MhsBiodataApiRequest, opts ...grpc.CallOption) (*MhsBiodataApiResponse, error)
-	CheckMhsAlumni(ctx context.Context, in *MhsBiodataApiRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error)
+	CheckMhsAlumni(ctx context.Context, in *CheckMhsAlumniRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error)
 }
 
 type mhsBiodataApiServiceClient struct {
@@ -48,7 +48,7 @@ func (c *mhsBiodataApiServiceClient) FetchMhsBiodataByNim(ctx context.Context, i
 	return out, nil
 }
 
-func (c *mhsBiodataApiServiceClient) CheckMhsAlumni(ctx context.Context, in *MhsBiodataApiRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error) {
+func (c *mhsBiodataApiServiceClient) CheckMhsAlumni(ctx context.Context, in *CheckMhsAlumniRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error) {
 	out := new(CheckMhsAlumniResponse)
 	err := c.cc.Invoke(ctx, MhsBiodataApiService_CheckMhsAlumni_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -62,7 +62,7 @@ func (c *mhsBiodataApiServiceClient) CheckMhsAlumni(ctx context.Context, in *Mhs
 // for forward compatibility
 type MhsBiodataApiServiceServer interface {
 	FetchMhsBiodataByNim(context.Context, *MhsBiodataApiRequest) (*MhsBiodataApiResponse, error)
-	CheckMhsAlumni(context.Context, *MhsBiodataApiRequest) (*CheckMhsAlumniResponse, error)
+	CheckMhsAlumni(context.Context, *CheckMhsAlumniRequest) (*CheckMhsAlumniResponse, error)
 	mustEmbedUnimplementedMhsBiodataApiServiceServer()
 }
 
@@ -73,7 +73,7 @@ type UnimplementedMhsBiodataApiServiceServer struct {
 func (UnimplementedMhsBiodataApiServiceServer) FetchMhsBiodataByNim(context.Context, *MhsBiodataApiRequest) (*MhsBiodataApiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchMhsBiodataByNim not implemented")
 }
-func (UnimplementedMhsBiodataApiServiceServer) CheckMhsAlumni(context.Context, *MhsBiodataApiRequest) (*CheckMhsAlumniResponse, error) {
+func (UnimplementedMhsBiodataApiServiceServer) CheckMhsAlumni(context.Context, *CheckMhsAlumniRequest) (*CheckMhsAlumniResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckMhsAlumni not implemented")
 }
 func (UnimplementedMhsBiodataApiServiceServer) mustEmbedUnimplementedMhsBiodataApiServiceServer() {}
@@ -108,7 +108,7 @@ func _MhsBiodataApiService_FetchMhsBiodataByNim_Handler(srv interface{}, ctx con
 }
 
 func _MhsBiodataApiService_CheckMhsAlumni_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MhsBiodataApiRequest)
+	in := new(CheckMhsAlumniRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func _MhsBiodataApiService_CheckMhsAlumni_Handler(srv interface{}, ctx context.C
 		FullMethod: MhsBiodataApiService_CheckMhsAlumni_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MhsBiodataApiServiceServer).CheckMhsAlumni(ctx, req.(*MhsBiodataApiRequest))
+		return srv.(MhsBiodataApiServiceServer).CheckMhsAlumni(ctx, req.(*CheckMhsAlumniRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

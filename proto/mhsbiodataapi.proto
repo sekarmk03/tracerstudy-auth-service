@@ -34,6 +34,11 @@ message MhsBiodataApiResponse {
     MhsBiodataApi data = 3;
 }
 
+message CheckMhsAlumniRequest {
+    string nim = 1;
+    string tgl_sidang = 2;
+}
+
 message CheckMhsAlumniResponse {
     uint32 code = 1;
     string message = 2;
@@ -42,5 +47,5 @@ message CheckMhsAlumniResponse {
 
 service MhsBiodataApiService {
     rpc FetchMhsBiodataByNim(MhsBiodataApiRequest) returns (MhsBiodataApiResponse) {};
-    rpc CheckMhsAlumni(MhsBiodataApiRequest) returns (CheckMhsAlumniResponse) {};
+    rpc CheckMhsAlumni(CheckMhsAlumniRequest) returns (CheckMhsAlumniResponse) {};
 }
