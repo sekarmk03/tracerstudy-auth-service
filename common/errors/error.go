@@ -33,18 +33,12 @@ func (err *Error) Error() error {
 func ParseError(err error) *Error {
 	var statusCode int32
 	if st, ok := status.FromError(err); ok {
-        // statusCode := st.Code()
+		// statusCode := st.Code()
 		statusCode = st.Proto().Code
-    }
+	}
 
 	// log.Println(err.Error())
 	// fmt.Println("Status code:", int(statusCode))
-
-	if err == nil {
-		return nil
-	}
-
-	split := strings.Split(err.Error(), ":")
 
 	var strToCode = map[int]codes.Code{
 		0:  codes.OK,
@@ -66,7 +60,23 @@ func ParseError(err error) *Error {
 		16: codes.Unauthenticated,
 	}
 
-	errlen := len(split)
+	if err == nil {
+		return nil
+	}
 
-	return NewError(strToCode[int(statusCode)], split[errlen-1])
+	// split := strings.Split(err.Error(), ":")
+
+	parts := strings.Split(err.Error(), "desc = ")
+
+	errlen := len(parts)
+
+	outputmsg := ""
+
+	if errlen > 1 {
+		outputmsg = parts[errlen-1]
+	} else {
+		outputmsg = "No Error Desc"
+	}
+
+	return NewError(strToCode[int(statusCode)], outputmsg)
 }
