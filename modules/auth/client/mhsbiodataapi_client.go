@@ -20,17 +20,9 @@ func BuildMhsBiodataServiceClient(url string) MhsBiodataApiServiceClient {
 	return c
 }
 
-func (mc *MhsBiodataApiServiceClient) FetchMhsBiodataByNim(nim string) (*pb.MhsBiodataApiResponse, error) {
-	req := &pb.MhsBiodataApiRequest{
-		Nim: nim,
-	}
-
-	return mc.Client.FetchMhsBiodataByNim(context.Background(), req)
-}
-
 func (mc *MhsBiodataApiServiceClient) CheckMhsAlumni(nim string, tglSidang string) (*pb.CheckMhsAlumniResponse, error) {
 	req := &pb.CheckMhsAlumniRequest{
-		Nim: nim,
+		Nim:       nim,
 		TglSidang: tglSidang,
 	}
 
